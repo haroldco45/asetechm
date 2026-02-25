@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASETEC HM - App Oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primario: #047857; --secundario: #10b981; }
+        body {
+            /* Mantenemos el fondo de Vibras Positivas por instrucción previa */
+            background-image: url('https://i.ibb.co/3ykX8kz/logo-vibras-positivas.png'); 
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: 60%;
+            background-color: rgba(255, 255, 255, 0.96);
+            background-blend-mode: overlay;
+        }
+        .btn-gps-blink {
+            background-color: var(--primario);
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(4, 120, 87, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 8px rgba(4, 120, 87, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(4, 120, 87, 0); }
+        }
+        #bloqueo-sub {
+            display: none; position: fixed; inset: 0; background: white; 
+            z-index: 9999; justify-content: center; align-items: center; 
+            text-align: center; padding: 20px;
+        }
+    </style>
+</head>
+<body class="p-4 pb-10 max-w-2xl mx-auto font-sans">
+
+    <div id="bloqueo-sub">
+        <div>
+            <h1 class="text-2xl font-black text-gray-800">Suscripción Vencida</h1>
+            <p class="text-gray-500 text-sm mt-2">Contacte al desarrollador para reactivar el servicio.</p>
+            <a href="https://wa.me/573007293667" class="mt-6 inline-block bg-black text-white px-6 py-2 rounded-full font-bold">SOPORTE TÉCNICO</a>
+        </div>
+    </div>
+
+    <header class="text-center mb-6">
+        <img src="asetechm.PNG" alt="Logo ASETEC HM" class="mx-auto w-48 mb-2">
+        <h2 class="text-xs font-black text-emerald-800 uppercase tracking-widest">Asesoría Tecnológica Harold y Marleny</h2>
+        <p class="text-[9px] text-gray-500 font-bold uppercase mt-1">Soluciones Digitales Especializadas para Pymes</p>
+        
+        <div class="mt-6">
+            <a href="ASETEC.pdf" target="_blank" class="inline-flex items-center gap-3 bg-emerald-800 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase shadow-lg hover:scale-105 transition-all">
+                <i class="fas fa-file-pdf text-xl text-yellow-400"></i> Ver Catálogo de Servicios
+            </a>
+        </div>
+    </header>
+
+    <section class="bg-white p-5 rounded-3xl shadow-xl border-t-4 border-emerald-700 mb-6">
+        <div id="vista-resumida" class="hidden mb-4">
+            <div class="flex justify-between items-center bg-emerald-50 p-3 rounded-xl border border-emerald-100">
+                <div class="text-[11px]">
+                    <p class="font-black text-emerald-900 uppercase" id="resumen-nombre"></p>
+                    <p class="text-gray-500 italic" id="resumen-dir"></p>
+                </div>
+                <button onclick="toggleEditor()" class="text-emerald-700 font-bold text-[10px] border-b border-emerald-700 uppercase">Editar Datos</button>
+            </div>
+        </div>
+
+        <div id="editor-datos" class="space-y-3">
+            <h3 class="font-black text-emerald-900 text-[10px] uppercase mb-2 italic">Registro de Solicitante</h3>
+            <input type="text" id="nombre" placeholder="Nombre de la Empresa o Cliente" class="w-full p-3 border rounded-xl outline-none focus:border-emerald-500 bg-gray-50 text-sm font-semibold">
+            <input type="text" id="direccion" placeholder="Dirección en Caucasia o Municipio" class="w-full p-3 border rounded-xl outline-none focus:border-emerald-500 bg-gray-50 text-sm font-semibold">
+            <input type="tel" id="celular" placeholder="WhatsApp de contacto" class="w-full p-3 border rounded-xl outline-none focus:border-emerald-500 bg-gray-50 text-sm font-semibold">
+            <button onclick="guardarDatos()" class="w-full bg-emerald-900 text-white font-black py-3 rounded-xl text-xs uppercase shadow-md">Confirmar Datos</button>
+        </div>
+
+        <button onclick="obtenerUbicacionReal()" class="w-full btn-gps-blink text-white font-black py-4 rounded-xl flex items-center justify-center gap-3 shadow-lg text-xs uppercase mt-4">
+            <i class="fas fa-location-dot text-lg"></i> Vincular Ubicación GPS
+        </button>
+        <div id="status_gps" class="hidden text-center text-emerald-600 font-bold text-[9px] uppercase italic mt-2">
+            <i class="fas fa-check-double"></i> Ubicación Vinculada
+        </div>
+        <input type="hidden" id="gps_url">
+    </section>
+
+    <section class="bg-white p-5 rounded-3xl shadow-md border-l-4 border-emerald-500 mb-6">
+        <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">¿Qué servicio necesitas?</label>
+        <textarea id="pedido" placeholder="Ej: Desarrollo de App Web para mi negocio, Servicio de Domicilio, Gestión de Transporte..." class="w-full p-4 border rounded-2xl h-32 focus:border-emerald-500 outline-none text-sm bg-gray-50 mb-4 font-medium"></textarea>
+
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase">Tipo de Requerimiento</label>
+                <select id="servicio_tipo" class="w-full p-3 border rounded-xl font-bold bg-gray-50 text-sm outline-none">
+                    <option value="Desarrollo App Web">Desarrollo App Web Personalizada</option>
+                    <option value="Mototaxi / Domicilio">Servicio de Transporte / Domicilio</option>
+                    <option value="Gestión de Transporte">Control y Gestión de Transporte</option>
+                    <option value="Asesoría Tecnológica">Asesoría Tecnológica General</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] font-black text-gray-400 uppercase">Notas Adicionales</label>
+                <input type="text" id="obs" placeholder="Detalles extra del pedido" class="w-full p-3 border rounded-xl bg-gray-50 text-sm outline-none">
+            </div>
+        </div>
+        
+        <button onclick="enviarPedido()" class="w-full bg-emerald-600 text-white py-5 rounded-2xl font-black text-xl flex items-center justify-center gap-3 active:scale-95 transition-all shadow-xl mt-6">
+            <i class="fab fa-whatsapp text-2xl"></i> SOLICITAR SERVICIO
+        </button>
+    </section>
+
+    <footer class="text-center mt-6">
+        <p class="text-[9px] font-bold text-gray-400 uppercase">BARRIO COLINAS DEL PORTAL, CAUCASIA ANTIOQUIA</p>
+        <p class="text-[10px] font-black uppercase text-gray-500 tracking-widest mt-10">app diseñada por vibras positvas - © 2026</p>
+    </footer>
+
+    <script>
+        const fechaCorte = new Date('2030-12-31');
+        if (new Date() > fechaCorte) {
+            document.getElementById('bloqueo-sub').style.display = 'flex';
+        }
+
+        window.onload = function() {
+            if(localStorage.getItem('asetec_nombre')) {
+                document.getElementById('nombre').value = localStorage.getItem('asetec_nombre');
+                document.getElementById('direccion').value = localStorage.getItem('asetec_dir');
+                document.getElementById('celular').value = localStorage.getItem('asetec_tel');
+                mostrarResumen();
+            }
+        };
+
+        function guardarDatos() {
+            const nom = document.getElementById('nombre').value;
+            const dir = document.getElementById('direccion').value;
+            if(!nom || !dir) return alert("Por favor ingresa tu nombre y dirección.");
+            localStorage.setItem('asetec_nombre', nom);
+            localStorage.setItem('asetec_dir', dir);
+            localStorage.setItem('asetec_tel', document.getElementById('celular').value);
+            mostrarResumen();
+        }
+
+        function mostrarResumen() {
+            document.getElementById('resumen-nombre').innerText = document.getElementById('nombre').value;
+            document.getElementById('resumen-dir').innerText = document.getElementById('direccion').value;
+            document.getElementById('editor-datos').classList.add('hidden');
+            document.getElementById('vista-resumida').classList.remove('hidden');
+        }
+
+        function toggleEditor() {
+            document.getElementById('editor-datos').classList.toggle('hidden');
+            document.getElementById('vista-resumida').classList.toggle('hidden');
+        }
+
+        function obtenerUbicacionReal() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    document.getElementById('gps_url').value = url;
+                    document.getElementById('status_gps').classList.remove('hidden');
+                }, function() {
+                    alert("Para vincular la ubicación, por favor permite el acceso al GPS.");
+                });
+            }
+        }
+
+        function enviarPedido() {
+            const nom = document.getElementById('nombre').value;
+            const requerimiento = document.getElementById('pedido').value;
+            if(!nom || !requerimiento) return alert("Faltan datos para procesar tu solicitud.");
+
+            let msg = `*🛠️ NUEVA SOLICITUD - ASETEC HM*\n`;
+            msg += `--------------------------\n`;
+            msg += `👤 *Cliente:* ${nom}\n`;
+            msg += `📍 *Ubicación:* ${document.getElementById('direccion').value}\n`;
+            if(document.getElementById('gps_url').value) msg += `🗺️ *Mapa:* ${document.getElementById('gps_url').value}\n`;
+            msg += `📋 *Tipo:* ${document.getElementById('servicio_tipo').value}\n`;
+            msg += `--------------------------\n`;
+            msg += `📦 *DETALLE DEL SERVICIO:*\n${requerimiento}\n`;
+            if(document.getElementById('obs').value) msg += `📝 *Obs:* ${document.getElementById('obs').value}\n`;
+            msg += `--------------------------\n`;
+            msg += `🚀 _Asesoría Tecnológica Harold y Marleny_`;
+
+            window.open(`https://wa.me/573117700431?text=${encodeURIComponent(msg)}`);
+        }
+    </script>
+</body>
+</html>
