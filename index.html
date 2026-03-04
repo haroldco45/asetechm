@@ -2,14 +2,22 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ASETEC HM - App Oficial</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#047857">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ASETEC HM">
+    <link rel="apple-touch-icon" href="asetechm.PNG">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --primario: #047857; --secundario: #10b981; }
         body {
-            /* Mantenemos el fondo de Vibras Positivas por instrucción previa */
+            /* Fondo de Vibras Positivas */
             background-image: url('https://i.ibb.co/3ykX8kz/logo-vibras-positivas.png'); 
             background-attachment: fixed;
             background-position: center;
@@ -17,6 +25,7 @@
             background-size: 60%;
             background-color: rgba(255, 255, 255, 0.96);
             background-blend-mode: overlay;
+            overflow-x: hidden;
         }
         .btn-gps-blink {
             background-color: var(--primario);
@@ -86,7 +95,7 @@
 
     <section class="bg-white p-5 rounded-3xl shadow-md border-l-4 border-emerald-500 mb-6">
         <label class="text-[10px] font-black text-gray-400 uppercase mb-2 block">¿Qué servicio necesitas?</label>
-        <textarea id="pedido" placeholder="Ej: Desarrollo de App Web para mi negocio, Servicio de Domicilio, Gestión de Transporte..." class="w-full p-4 border rounded-2xl h-32 focus:border-emerald-500 outline-none text-sm bg-gray-50 mb-4 font-medium"></textarea>
+        <textarea id="pedido" placeholder="Ej: Desarrollo de App Web para mi negocio..." class="w-full p-4 border rounded-2xl h-32 focus:border-emerald-500 outline-none text-sm bg-gray-50 mb-4 font-medium"></textarea>
 
         <div class="space-y-4">
             <div>
@@ -154,7 +163,8 @@
         function obtenerUbicacionReal() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(pos) {
-                    const url = `https://www.google.com/maps?q=${pos.coords.latitude},${pos.coords.longitude}`;
+                    // Corrección del formato de URL de Google Maps
+                    const url = `http://maps.google.com/?q=${pos.coords.latitude},${pos.coords.longitude}`;
                     document.getElementById('gps_url').value = url;
                     document.getElementById('status_gps').classList.remove('hidden');
                 }, function() {
